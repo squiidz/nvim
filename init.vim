@@ -43,7 +43,14 @@ Plug 'scrooloose/nerdtree'
 
 
 " Autocomplete/fuzzy search/ack
-Plug 'Valloric/YouCompleteMe'
+" Plug 'Valloric/YouCompleteMe'
+Plug 'Shougo/deoplete.nvim', { 'do': 'gem install nvim; :UpdateRemotePlugins' }
+" {{{
+  let g:deoplete#enable_at_startup = 1
+  " let g:deoplete#omni#functions = {}
+  " let g:deoplete#omni#functions.ruby = 'rubycomplete#Complete'
+" }}}
+"Plug 'fishbullet/deoplete-ruby'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 " {{{
@@ -102,9 +109,7 @@ Plug 'janko-m/vim-test'
 
 " misc
 Plug 'godlygeek/tabular'
-
 Plug 'kshenoy/vim-signature'
-
 Plug 'itchyny/lightline.vim'
 " {{{
   let g:lightline = {
@@ -130,14 +135,6 @@ Plug 'junegunn/limelight.vim'
 " }}}
 
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
-
-" Local bundles
-if !has("nvim") && filereadable(glob("~/.vim-plug.local"))
-    source ~/.vim-plug.local
-endif
-if has("nvim") && filereadable(glob("~/.vim-plug.nvim.local"))
-    source ~/.vim-plug.nvim.local
-endif
 
 call plug#end()
 
