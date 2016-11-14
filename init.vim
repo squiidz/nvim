@@ -45,7 +45,7 @@ Plug 'scrooloose/nerdtree'
 
 " Autocomplete/fuzzy search/ack
 " Plug 'Valloric/YouCompleteMe'
-Plug 'Shougo/deoplete.nvim', { 'do': ['gem install nvim', ':UpdateRemotePlugins'] }
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " {{{
   let g:deoplete#enable_at_startup = 1
   " let g:deoplete#omni#functions = {}
