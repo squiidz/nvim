@@ -100,15 +100,24 @@ Plug 'kana/vim-textobj-indent'
 Plug 'nelstrom/vim-textobj-rubyblock'
 
 " tests
+Plug 'kassio/neoterm'
+" {{{
+  " Useful maps
+  " hide/close terminal
+  nnoremap <silent> ,th :call neoterm#close()<cr>
+  " clear terminal
+  nnoremap <silent> ,tl :call neoterm#clear()<cr>
+  " kills the current job (send a <c-c>)
+  nnoremap <silent> ,tc :call neoterm#kill()<cr>
+" }}}
 Plug 'janko-m/vim-test'
 " {{{
-  let test#strategy = "neovim"
+  let test#strategy = "neoterm"
   nmap <silent> <leader>r :TestFile<CR>
   nmap <silent> <leader>R :TestNearest<CR>
 " }}}
 
 " misc
-Plug 'godlygeek/tabular'
 Plug 'kshenoy/vim-signature'
 Plug 'itchyny/lightline.vim'
 " {{{
@@ -158,17 +167,13 @@ set noswapfile
 set nowrap                        " Turn off line wrapping.
 set scrolloff=3                   " Show 3 lines of context around the cursor.
 
-set termguicolors
-
 " Split below and right
 set splitbelow
 set splitright
 
-
 " Show tabs, trailing whitespaces, extends and precedes
 set list
 set listchars=tab:>-,trail:·,extends:>,precedes:<,nbsp:+
-
 
 " INDENTATION
 " ==============================================================
@@ -202,6 +207,7 @@ noremap <Leader>f :setlocal foldmethod=syntax foldcolumn=4<CR>
 
 " COLORSCHEME
 " ==============================================================
+set termguicolors
 set background=dark
 colorscheme solarized
 call togglebg#map("<F4>")
@@ -211,7 +217,6 @@ call togglebg#map("<F4>")
 " ==============================================================
 set cursorline
 set colorcolumn=80
-
 
 " CTags - refresh tags
 map <Leader>tt :!ctags --extra=+f --exclude=.git --exclude=log --exclude=compiled --exclude=tmp -R *<CR><CR>
@@ -250,7 +255,7 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " ==============================================================
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 " <esc> to exit insert mode in terminal
-tnoremap <Esc> <C-\><C-n>
+"tnoremap <Esc> <C-\><C-n>
 
 
 if filereadable(glob("~/.nvimrc.local"))
