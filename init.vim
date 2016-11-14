@@ -3,13 +3,14 @@
 " PLUGINS
 " ==============================================================
 
-" Autoinstall vim-plug {{{
+" Autoinstall vim-plug
+" {{{
 if empty(glob('~/.nvim/autoload/plug.vim'))
   silent !curl -fLo ~/.nvim/autoload/plug.vim --create-dirs
       \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        autocmd VimEnter * PlugInstall
-        endif
-        " }}}
+  autocmd VimEnter * PlugInstall
+endif
+" }}}
 call plug#begin('~/.nvim/plugged')
 
 " tpope!
@@ -177,7 +178,7 @@ set listchars=tab:>-,trail:·,extends:>,precedes:<,nbsp:+
 
 " INDENTATION
 " ==============================================================
-set expandtab     " replace <Tab with spaces
+set expandtab     " replace <Tab> with spaces
 set tabstop=2     " number of spaces that a <Tab> in the file counts for
 set softtabstop=2 " remove <Tab> symbols as it was spaces
 set shiftwidth=2  " indent size for << and >>
