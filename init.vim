@@ -1,5 +1,5 @@
 " vim: set ft=vim:
-
+set nocompatible
 " PLUGINS
 " ==============================================================
 
@@ -22,6 +22,10 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-git'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-ragtag'
+Plug 'fatih/vim-go'
+Plug 'rust-lang/rust.vim'
+Plug 'elixir-lang/vim-elixir'
+Plug 'racer-rust/vim-racer'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -30,6 +34,8 @@ Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-commentary'
 
+" Language setting
+" set ruby st=2
 " Navigation
 Plug 'scrooloose/nerdtree'
 " {{{
@@ -40,24 +46,29 @@ Plug 'scrooloose/nerdtree'
 
   map <F6> :NERDTreeToggle<CR>
   map <F5> :NERDTreeFind<CR>
+  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTreeToggle | endif
 " }}}
+
+" Rust Racer autocomplete
+"set hidden
+let g:racer_cmd = "~/.cargo/bin/racer"
+let $RUST_SRC_PATH="~/src/rustc-nightly/src/"
+let g:racer_experimental_completer = 1
 
 
 " Autocomplete/fuzzy search/ack
 " Plug 'Valloric/YouCompleteMe'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'fishbullet/deoplete-ruby'
 " {{{
-  let g:deoplete#enable_at_startup = 1
-  " let g:deoplete#omni#functions = {}
-  " let g:deoplete#omni#functions.ruby = 'rubycomplete#Complete'
+   let g:deoplete#enable_at_startup = 1
+   let g:deoplete#omni#functions = {}
+   let g:deoplete#omni#functions.ruby = 'rubycomplete#Complete'
 " }}}
-"Plug 'fishbullet/deoplete-ruby'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 " {{{
-  if has('nvim')
-    let $FZF_DEFAULT_OPTS .= ' --inline-info'
-  endif
+  let $FZF_DEFAULT_OPTS .= ' --inline-info'
 " }}}
 Plug 'junegunn/fzf.vim'
 " {{{
@@ -73,7 +84,11 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'mileszs/ack.vim'
 " {{{
-  let g:ackprg = 'ag --nogroup --nocolor --column'
+  if executable("rg")
+    let g:ackprg = 'rg --vimgrep --no-heading'
+  else
+    let g:ackprg = 'ag --nogroup --nocolor --column'
+  endif
 " }}}
 
 " Languages/editing
@@ -101,21 +116,27 @@ Plug 'kana/vim-textobj-indent'
 Plug 'nelstrom/vim-textobj-rubyblock'
 
 " tests
+Plug 'junegunn/vim-emoji'
 Plug 'kassio/neoterm'
 " {{{
-  " Useful maps
+  let g:neoterm_run_tests_bg = 1
+  let g:neoterm_raise_when_tests_fail = 1
+  let g:neoterm_close_when_tests_succeed = 1
+  let g:neoterm_rspec_lib_cmd = 'zeus rspec'
+
+  nmap <silent> <leader>r :call neoterm#test#run('file')<cr>
+  nmap <silent> <leader>R :call neoterm#test#run('current')<cr>
+
+  " toggle terminal
+  nnoremap <silent> ,tt :Ttoggle<cr>
   " hide/close terminal
   nnoremap <silent> ,th :call neoterm#close()<cr>
   " clear terminal
   nnoremap <silent> ,tl :call neoterm#clear()<cr>
   " kills the current job (send a <c-c>)
   nnoremap <silent> ,tc :call neoterm#kill()<cr>
-" }}}
-Plug 'janko-m/vim-test'
-" {{{
-  let test#strategy = "neoterm"
-  nmap <silent> <leader>r :TestFile<CR>
-  nmap <silent> <leader>R :TestNearest<CR>
+  "
+  tnoremap <leader><ESC> <C-\><C-n><C-w><C-p>
 " }}}
 
 " misc
@@ -123,9 +144,21 @@ Plug 'kshenoy/vim-signature'
 Plug 'itchyny/lightline.vim'
 " {{{
   let g:lightline = {
-        \ 'separator': { 'left': '', 'right': '' },
-        \ 'subseparator': { 'left': '', 'right': '' }
-        \ }
+    \ 'active': {
+    \   'right': [ [ 'lineinfo' ], [ 'percent' ],
+    \              [ 'neoterm', 'fileformat', 'fileencoding', 'filetype' ] ]
+    \ },
+    \ 'component_function': {
+    \   'neoterm': 'LightlineNeoterm'
+    \ },
+    \ 'separator': { 'left': '', 'right': '' },
+    \ 'subseparator': { 'left': '', 'right': '' }
+    \ }
+  set noshowmode " Remove duplicate information
+
+  function! LightlineNeoterm()
+    return g:neoterm_statusline
+  endfunction
 " }}}
 
 Plug 'airblade/vim-gitgutter'
@@ -136,7 +169,7 @@ Plug 'airblade/vim-gitgutter'
   let g:gitgutter_eager = 0
 " }}}
 "
-Plug 'AutoTag'
+Plug 'ludovicchabant/vim-gutentags'
 
 Plug 'junegunn/limelight.vim'
 " {{{
@@ -145,8 +178,20 @@ Plug 'junegunn/limelight.vim'
 " }}}
 
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
+"Plug 'fatih/molokai'
 
 call plug#end()
+
+" POST PLUGIN
+" ==============================================================
+
+" NEOTERM
+" Dependency on vim-emoji, needs to be loaded
+let g:vim_test_status = {
+  \ 'running': emoji#for('running'),
+  \ 'success': emoji#for('green_heart'),
+  \ 'failed': emoji#for('broken_heart')
+  \ }
 
 
 " General settings
@@ -209,10 +254,13 @@ noremap <Leader>f :setlocal foldmethod=syntax foldcolumn=4<CR>
 " COLORSCHEME
 " ==============================================================
 set termguicolors
+syntax enable
 set background=dark
+"let g:molokai_original=1
 colorscheme solarized
+let g:solarized_termcolors=256
+"set t_Co=256
 call togglebg#map("<F4>")
-
 
 " MISC
 " ==============================================================
@@ -255,9 +303,6 @@ autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 " NVIM
 " ==============================================================
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
-" <esc> to exit insert mode in terminal
-"tnoremap <Esc> <C-\><C-n>
-
 
 if filereadable(glob("~/.nvimrc.local"))
   source ~/.nvimrc.local
