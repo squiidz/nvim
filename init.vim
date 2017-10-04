@@ -23,7 +23,19 @@ Plug 'tpope/vim-git'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-ragtag'
 Plug 'fatih/vim-go'
+
+" Rust Support with RLS
 Plug 'rust-lang/rust.vim'
+Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_serverCommands = { 'rust': ['rustup', 'run', 'nightly', 'rls'] }
+
+nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+" Rust setup  end
+
 Plug 'elixir-lang/vim-elixir'
 Plug 'racer-rust/vim-racer'
 Plug 'tpope/vim-rails'
@@ -98,7 +110,7 @@ Plug 'bingaman/vim-sparkup'
   let g:sparkupArgs = '--no-last-newline --expand-divs'
 " }}}
 Plug 'kchmck/vim-coffee-script'
-Plug 'JSON.vim'
+Plug 'elzr/vim-json'
 Plug 'robbles/logstash.vim'
 Plug 'leafgarland/typescript-vim'
 Plug 'ekalinin/Dockerfile.vim'
@@ -218,8 +230,8 @@ set splitbelow
 set splitright
 
 " Show tabs, trailing whitespaces, extends and precedes
-set list
-set listchars=tab:>-,trail:·,extends:>,precedes:<,nbsp:+
+" set list
+" set listchars=tab:>-,trail:·,extends:>,precedes:<,nbsp:+
 
 " INDENTATION
 " ==============================================================
